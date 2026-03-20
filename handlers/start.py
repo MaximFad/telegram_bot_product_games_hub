@@ -16,11 +16,15 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await notify_inviter(context, inviter_id, refs_count)
 
     keyboard = [[InlineKeyboardButton(name, callback_data=key)] for key, (_, name) in LINKS.items()]
-    keyboard.append([InlineKeyboardButton("🎁 Получи бонус за друга", callback_data="my_refs")])
+    keyboard.append([InlineKeyboardButton("🎁 Мой прогресс и бонусы", callback_data="my_refs")])
     if user.id == ADMIN_ID:
         keyboard.append([InlineKeyboardButton("🔧 Админ панель", callback_data="admin_panel")])
 
     await update.effective_message.reply_text(
-        "👋 Выбери материал который хочешь получить:",
+        "👋 Привет! Добро пожаловать в Product Games Hub.\n\n"
+        "🎯 У тебя есть 2 уровня наград:\n\n"
+        "1) «Новичок» — пригласи 2 друзей и получи первый секретный материал\n"
+        "2) «Инсайдер» — пригласи ещё 3 друзей и открой супер-секретный бонус\n\n"
+        "Выбери, с чего начать:",
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
