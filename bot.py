@@ -6,9 +6,10 @@ TOKEN = os.environ["TOKEN"]
 CHANNEL_ID = int(os.environ["CHANNEL_ID"])
 
 LINKS = {
-    "link_1": (os.environ["LINK_1"], "📊 Таблица инструментов"),
-    "link_2": (os.environ["LINK_2"], "💰 Гайд по монетизации"),
-    "link_3": (os.environ["LINK_3"], "📄 Шаблон GDD"),
+    "link_1": (os.environ["LINK_1"], "📊 Таблица инструментов для анализа рынка мобильных игр"),
+    "link_2": (os.environ["LINK_2"], "💰 Пример карточки проекта"),
+    "link_3": (os.environ["LINK_3"], "📄 Пример отличного туториала"),
+    "link_4": (os.environ["LINK_3"], "📄 Статьи на Teletype"),
 }
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
