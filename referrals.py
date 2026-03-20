@@ -14,54 +14,61 @@ def share_keyboard(ref_link):
 async def notify_inviter(context, inviter_id, refs_count):
     ref_link = await get_ref_link(context, inviter_id)
 
+    # 1 друг
     if refs_count == 1:
         await context.bot.send_message(
             chat_id=inviter_id,
             text=(
-                f"🙌 Один друг уже с нами!\n\n"
-                f"👥 Приглашено друзей: 1 из {REFERRALS_FOR_BONUS_1}\n"
-                f"🎁 Ещё 1 — и получишь секретный материал!\n\n"
+                "🙌 Один друг уже с нами!\n\n"
+                f"Текущий уровень: «Новичок»\n"
+                f"👥 Приглашено друзей: 1 из {REFERRALS_FOR_BONUS_1}\n\n"
+                "Ещё 1 друг — и ты получишь первый секретный материал.\n\n"
                 f"🔗 Твоя ссылка:\n{ref_link}"
             ),
             reply_markup=share_keyboard(ref_link)
         )
 
+    # 2 друга — первый бонус
     elif refs_count == REFERRALS_FOR_BONUS_1:
         await context.bot.send_message(
             chat_id=inviter_id,
             text=(
-                f"🎉 Поздравляем! Ты пригласил 2 друзей!\n\n"
-                f"Вот твой первый секретный материал:\n"
+                "🎉 Уровень «Новичок» завершён!\n\n"
+                "Вот твой первый секретный материал:\n"
                 f"🔗 {BONUS_LINKS[1]}\n\n"
-                f"———\n\n"
-                f"🔥 Хочешь ещё один супер-секретный бонус?\n"
-                f"Пригласи ещё 3 друзей — и он твой!\n\n"
-                f"👥 Осталось пригласить: 3 из 3\n\n"
+                "🎯 Новый квест: уровень «Инсайдер»\n"
+                "Пригласи ещё 3 друзей и получи супер-секретный бонус.\n\n"
+                "Текущий прогресс уровня «Инсайдер»: 0 из 3\n\n"
                 f"🔗 Твоя ссылка:\n{ref_link}"
             ),
             reply_markup=share_keyboard(ref_link)
         )
 
+    # 3–4 друга на втором уровне
     elif REFERRALS_FOR_BONUS_1 < refs_count < REFERRALS_FOR_BONUS_2:
+        done_on_level2 = refs_count - REFERRALS_FOR_BONUS_1
         remaining = REFERRALS_FOR_BONUS_2 - refs_count
         await context.bot.send_message(
             chat_id=inviter_id,
             text=(
-                f"🙌 Ещё один друг присоединился!\n\n"
-                f"👥 Осталось пригласить: {remaining} из 3\n"
-                f"🔥 Ты близко к супер-секретному бонусу!\n\n"
+                "🙌 Ещё один друг присоединился!\n\n"
+                "Текущий уровень: «Инсайдер»\n"
+                f"👥 Прогресс: {done_on_level2} из 3\n"
+                f"Осталось пригласить: {remaining} друга(ов) до супер-секретного бонуса.\n\n"
                 f"🔗 Твоя ссылка:\n{ref_link}"
             ),
             reply_markup=share_keyboard(ref_link)
         )
 
+    # 5 друзей — второй бонус
     elif refs_count == REFERRALS_FOR_BONUS_2:
         await context.bot.send_message(
             chat_id=inviter_id,
             text=(
-                f"🏆 Невероятно! Ты пригласил 5 друзей!\n\n"
-                f"Вот твой супер-секретный бонус:\n"
+                "🏆 Уровень «Инсайдер» завершён!\n\n"
+                "Ты пригласил 5 друзей и открыл все секретные материалы.\n\n"
+                "Вот твой супер-секретный бонус:\n"
                 f"🔗 {BONUS_LINKS[2]}\n\n"
-                f"Спасибо, что помогаешь развивать канал — ты красавчик! 🔥"
+                "Спасибо, что помогаешь развивать канал — ты в элите Product Games Hub 💪"
             )
         )
