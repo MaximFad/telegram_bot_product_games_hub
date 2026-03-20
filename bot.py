@@ -1,12 +1,31 @@
 import os
 import json
+import gspread
+from google.oauth2.service_account import Credentials
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes, MessageHandler, filters
 
 TOKEN = os.environ["TOKEN"]
 CHANNEL_ID = int(os.environ["CHANNEL_ID"])
 ADMIN_ID = int(os.environ["ADMIN_ID"])
-USERS_FILE = "users.json"
+SHEET_ID = os.environ["GOOGLE_SHEET_ID"]
+
+# Подключение к Google Sheets
+creds_json = json.loads(os.environ["GOOGLE_CREDENTIALS"])
+creds = Credentials.from_service_account_info(creds_json, scopes=[
+    "https://www.googleapis.com/auth/spreadsheets"
+])
+gc = gspread.authorize(creds)
+sheet = gc.open_by_key(SHEET_ID).worksheet("users")
+
+def load_users():
+    records = sheet.col_values(1)[1:]  # пропускаем заголовок
+    return set(int(uid) for uid in records if uid)
+
+def save_user(user_id):
+    users = load_users()
+    if user_id not in users:
+        sheet.append_row([user_id])
 
 LINKS = {
     "link_1": (os.environ["LINK_1"], "📊 Инструменты для анализа игр"),
@@ -14,18 +33,6 @@ LINKS = {
     "link_3": (os.environ["LINK_3"], "Пример отличного туториала"),
     "link_4": (os.environ["LINK_4"], "Статьи на Teletype"),
 }
-
-def load_users():
-    if os.path.exists(USERS_FILE):
-        with open(USERS_FILE, "r") as f:
-            return set(json.load(f))
-    return set()
-
-def save_user(user_id):
-    users = load_users()
-    users.add(user_id)
-    with open(USERS_FILE, "w") as f:
-        json.dump(list(users), f)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     save_user(update.effective_user.id)
@@ -58,7 +65,7 @@ async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != ADMIN_ID:
         return
     if not context.args:
-        await update.message.reply_text("Напиши текст: /broadcast Новый материал вышел!")
+        await update.message.reply_text("Напиши текст: /broadcast Привет!")
         return
     text = " ".join(context.args)
     users = load_users()
