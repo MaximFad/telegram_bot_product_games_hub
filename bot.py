@@ -1,6 +1,7 @@
 import os
 import json
 import gspread
+from datetime import datetime
 from google.oauth2.service_account import Credentials
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes, MessageHandler, filters, ConversationHandler
@@ -28,15 +29,22 @@ LINKS = {
 
 def load_users():
     records = sheet.col_values(1)[1:]
-    return set(int(uid) for uid in records if uid)
+    return set(int(uid) for uid in records if uid.strip().lstrip('-').isdigit())
 
-def save_user(user_id):
+def save_user(user):
     users = load_users()
-    if user_id not in users:
-        sheet.append_row([user_id])
+    if user.id not in users:
+        sheet.append_row([
+            user.id,
+            user.username or "",
+            user.first_name or "",
+            user.last_name or "",
+            user.language_code or "",
+            "✅" if user.is_premium else ""
+        ])
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    save_user(update.effective_user.id)
+    save_user(update.effective_user)
     keyboard = [[InlineKeyboardButton(name, callback_data=key)] for key, (_, name) in LINKS.items()]
     if update.effective_user.id == ADMIN_ID:
         keyboard.append([InlineKeyboardButton("🔧 Админ панель", callback_data="admin_panel")])
@@ -44,6 +52,25 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "👋 Выбери материал который хочешь получить:",
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
+
+async def check_and_send(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    user_id = query.from_user.id
+    key = query.data
+    try:
+        member = await context.bot.get_chat_member(CHANNEL_ID, user_id)
+        if member.status in ["member", "administrator", "creator"]:
+            link, name = LINKS[key]
+            await query.message.reply_text(f"✅ Вот твой материал — {name}:\n{link}")
+        else:
+            keyboard = [[InlineKeyboardButton("✅ Я подписался", callback_data=key)]]
+            await query.message.reply_text(
+                "❌ Сначала подпишись на канал @product_games_hub и нажми кнопку снова.",
+                reply_markup=InlineKeyboardMarkup(keyboard)
+            )
+    except Exception:
+        await query.message.reply_text("Ошибка проверки. Попробуй снова.")
 
 async def admin_panel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -82,25 +109,6 @@ async def do_broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Отменено.")
     return ConversationHandler.END
-
-async def check_and_send(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-    user_id = query.from_user.id
-    key = query.data
-    try:
-        member = await context.bot.get_chat_member(CHANNEL_ID, user_id)
-        if member.status in ["member", "administrator", "creator"]:
-            link, name = LINKS[key]
-            await query.message.reply_text(f"✅ Вот твой материал — {name}:\n{link}")
-        else:
-            keyboard = [[InlineKeyboardButton("✅ Я подписался", callback_data=key)]]
-            await query.message.reply_text(
-                "❌ Сначала подпишись на канал @product_games_hub и нажми кнопку снова.",
-                reply_markup=InlineKeyboardMarkup(keyboard)
-            )
-    except Exception:
-        await query.message.reply_text("Ошибка проверки. Попробуй снова.")
 
 broadcast_conv = ConversationHandler(
     entry_points=[CallbackQueryHandler(ask_broadcast_text, pattern="^do_broadcast$")],
