@@ -9,7 +9,7 @@ LINKS = {
     "link_1": (os.environ["LINK_1"], "📊 Инструменты для анализа игр"),
     "link_2": (os.environ["LINK_2"], "Пример карточки проекта"),
     "link_3": (os.environ["LINK_3"], "Пример отличного туториала"),
-    "link_4": (os.environ["LINK_3"], "Статьи на Teletype"),
+    "link_4": (os.environ["LINK_4"], "Статьи на Teletype"),
 }
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
