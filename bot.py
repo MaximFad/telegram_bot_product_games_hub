@@ -6,10 +6,10 @@ TOKEN = os.environ["TOKEN"]
 CHANNEL_ID = int(os.environ["CHANNEL_ID"])
 
 LINKS = {
-    "link_1": (os.environ["LINK_1"], "📊 Таблица инструментов для анализа рынка мобильных игр"),
-    "link_2": (os.environ["LINK_2"], "💰 Пример карточки проекта"),
-    "link_3": (os.environ["LINK_3"], "📄 Пример отличного туториала"),
-    "link_4": (os.environ["LINK_3"], "📄 Статьи на Teletype"),
+    "link_1": (os.environ["LINK_1"], "📊 Инструменты для анализа игр"),
+    "link_2": (os.environ["LINK_2"], "Пример карточки проекта"),
+    "link_3": (os.environ["LINK_3"], "Пример отличного туториала"),
+    "link_4": (os.environ["LINK_3"], "Статьи на Teletype"),
 }
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -38,7 +38,10 @@ async def check_and_send(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception:
         await query.message.reply_text("Ошибка проверки. Попробуй снова.")
 
+from telegram.ext import MessageHandler, filters
+
 app = ApplicationBuilder().token(TOKEN).build()
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CallbackQueryHandler(check_and_send))
+app.add_handler(MessageHandler(filters.ALL, start))
 app.run_polling()
