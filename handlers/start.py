@@ -21,10 +21,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         keyboard.append([InlineKeyboardButton("🔧 Админ панель", callback_data="admin_panel")])
 
     await update.effective_message.reply_text(
-        "👋 Привет! Добро пожаловать в Product Games Hub.\n\n"
-        "🎯 У тебя есть 2 уровня наград:\n\n"
-        "1) «Новичок» — пригласи 2 друзей и получи первый секретный материал\n"
-        "2) «Инсайдер» — пригласи ещё 3 друзей и открой супер-секретный бонус\n\n"
-        "Выбери, с чего начать:",
-        reply_markup=InlineKeyboardMarkup(keyboard)
-    )
+    "👋 Привет! Это Product Games Hub.\n\n"
+    "Забери полезные материалы по gamedev и открой секретные бонусы за друзей.",
+    reply_markup=InlineKeyboardMarkup(keyboard)
+)
