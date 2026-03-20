@@ -17,8 +17,10 @@ async def check_and_send(update: Update, context: ContextTypes.DEFAULT_TYPE):
             count = count_referrals(user_id)
             await query.message.reply_text(
                 f"✅ Вот твой материал — {name}:\n{link}\n\n"
-                f"🎁 Пригласи 2 друзей — получи секретный материал!\n"
-                f"👥 Приглашено: {count}/{REFERRALS_FOR_BONUS_1}",
+                "🎁 Параллельно можешь открыть секретные материалы.\n"
+                f"Пригласи 2 друзей по своей ссылке — и получишь первый закрытый бонус.\n\n"
+                f"👥 Сейчас приглашено: {count} из {REFERRALS_FOR_BONUS_1}\n\n"
+                f"🔗 Твоя ссылка:\n{ref_link}",
                 reply_markup=share_keyboard(ref_link)
             )
         else:
