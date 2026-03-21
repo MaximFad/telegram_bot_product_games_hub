@@ -38,11 +38,6 @@ app.add_handler(CallbackQueryHandler(materials_menu, pattern="^materials_menu$")
 app.add_handler(CallbackQueryHandler(my_refs, pattern="^my_refs$"))
 app.add_handler(CallbackQueryHandler(admin_panel, pattern="^admin_panel$"))
 app.add_handler(CallbackQueryHandler(stats, pattern="^stats$"))
-
-# Все материалы и бонусы идут через один хендлер
-app.add_handler(CallbackQueryHandler(check_and_send, pattern="^(link_|secret_)"))
-
-# Возврат в меню из реф-панели
-app.add_handler(CallbackQueryHandler(start, pattern="^back_to_menu$"))
+app.add_handler(CallbackQueryHandler(check_and_send, pattern="^link_"))
 
 app.run_polling()
