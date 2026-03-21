@@ -4,6 +4,17 @@ from config import LINKS, CHANNEL_ID, REFERRALS_FOR_BONUS_1
 from sheets import count_referrals
 from referrals import get_ref_link, share_keyboard
 
+async def materials_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+
+    keyboard = [[InlineKeyboardButton(name, callback_data=key)] for key, (_, name) in LINKS.items()]
+    await query.message.reply_text(
+        "📂 Таблицы и документы\n\n"
+        "Выбери материал:",
+        reply_markup=InlineKeyboardMarkup(keyboard)
+    )
+
 async def check_and_send(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
