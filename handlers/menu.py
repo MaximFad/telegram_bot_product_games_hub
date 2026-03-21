@@ -4,6 +4,7 @@ from config import LINKS, CHANNEL_ID, REFERRALS_FOR_BONUS_1
 from sheets import count_referrals
 from referrals import get_ref_link, share_keyboard
 
+
 async def materials_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -14,6 +15,7 @@ async def materials_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "Выбери материал:",
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
+
 
 async def check_and_send(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
