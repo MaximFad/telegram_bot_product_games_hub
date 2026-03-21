@@ -1,8 +1,8 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
+
 from sheets import count_referrals
 from referrals import get_ref_link
-from config import REFERRALS_FOR_BONUS_1, REFERRALS_FOR_BONUS_2
 from handlers.menu import get_level_name, get_next_level_target
 
 
@@ -32,11 +32,12 @@ async def my_refs(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         text += (
             "🎯 Ты на максимальном уровне «Амбассадор канала».\n"
-            "Дальше будут временные челленджи и сезонные бонусы для амбассадоров."
+            "Дальше будут временные челленджи и сезонные бонусы."
         )
 
     keyboard = [
         [InlineKeyboardButton("📤 Поделиться ссылкой", switch_inline_query=ref_link)],
+        [InlineKeyboardButton("⬅️ Вернуться в меню", callback_data="back_to_menu")],
     ]
 
     await query.message.reply_text(
