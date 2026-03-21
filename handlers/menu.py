@@ -40,14 +40,10 @@ async def materials_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     count = count_referrals(query.from_user.id)
 
     if count >= REFERRALS_FOR_BONUS_1:
-        keyboard.append([
-            InlineKeyboardButton("🔒 Секретный бонус 1", callback_data="secret_1")
-        ])
+        keyboard.append([InlineKeyboardButton("🔒 Секретный бонус 1", callback_data="secret_1")])
 
     if count >= REFERRALS_FOR_BONUS_2:
-        keyboard.append([
-            InlineKeyboardButton("🔒 Секретный бонус 2", callback_data="secret_2")
-        ])
+        keyboard.append([InlineKeyboardButton("🔒 Секретный бонус 2", callback_data="secret_2")])
 
     await query.message.reply_text(
         "📂 Таблицы и документы — выбери материал:",
@@ -67,15 +63,9 @@ async def check_and_send(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         if member.status not in ("member", "administrator", "creator"):
             keyboard = [
-                [
-                    InlineKeyboardButton(
-                        "📢 Подписаться на канал",
-                        url="https://t.me/product_games_hub",
-                    )
-                ],
+                [InlineKeyboardButton("📢 Подписаться на канал", url="https://t.me/product_games_hub")],
                 [InlineKeyboardButton("✅ Я подписался", callback_data=key)],
             ]
-
             await query.message.reply_text(
                 "❌ Сначала подпишись на канал @product_games_hub, чтобы получить материалы.\n"
                 "После подписки вернись в бота и нажми кнопку ещё раз.",
@@ -100,7 +90,7 @@ async def check_and_send(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 "🎁 Миссия: поднять уровень персонажа\n"
                 f"🎯 Цель: пригласить {REFERRALS_FOR_BONUS_1} друзей по своей ссылке и открыть первый секретный бонус.\n"
                 f"🏅 Текущий уровень: {level_name}\n"
-                f"👥 Прогресс: {count} из {REFERRALS_FOR_BONUS_1} приглашённых\n"
+                f"👥 Прогресс: {count} из {REFERRALS_FOR_BONUS_1}\n"
                 f"🔗 Твоя ссылка:\n{ref_link}",
                 reply_markup=share_keyboard(ref_link),
             )
@@ -115,12 +105,8 @@ async def check_and_send(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 return
 
             await query.message.reply_text(
-                "✅ Достижение получено — ты выполнил реферальную миссию «Новичок»\n\n"
-                "🎁 Разблокирован первый секретный бонус:\n"
-                f"🔗 {BONUS_LINKS[1]}\n\n"
-                "🏅 Новый уровень: «Инсайдер»\n"
-                f"👥 Твои приглашённые: {count}\n\n"
-                "Следующая цель: открыть второй секретный бонус.",
+                "✅ Разблокирован первый секретный бонус:\n"
+                f"{BONUS_LINKS[1]}",
                 reply_markup=share_keyboard(ref_link),
             )
             return
@@ -134,12 +120,8 @@ async def check_and_send(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 return
 
             await query.message.reply_text(
-                "✅ Достижение получено — ты закрыл реферальную миссию «Инсайдер»\n\n"
-                "🎁 Разблокирован второй секретный бонус:\n"
-                f"🔗 {BONUS_LINKS[2]}\n\n"
-                "🏅 Новый уровень: «Амбассадор канала»\n"
-                f"👥 Всего приглашённых: {count}\n\n"
-                "Ты открыл все текущие секретные материалы Product Games Hub.",
+                "✅ Разблокирован второй секретный бонус:\n"
+                f"{BONUS_LINKS[2]}",
                 reply_markup=share_keyboard(ref_link),
             )
             return
