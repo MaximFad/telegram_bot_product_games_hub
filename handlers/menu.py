@@ -11,8 +11,7 @@ async def materials_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     keyboard = [[InlineKeyboardButton(name, callback_data=key)] for key, (_, name) in LINKS.items()]
     await query.message.reply_text(
-        "📂 Таблицы и документы\n\n"
-        "Выбери материал:",
+        "📂 Таблицы и документы — выбери материал:",
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
 
