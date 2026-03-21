@@ -14,7 +14,6 @@ def share_keyboard(ref_link):
 async def notify_inviter(context, inviter_id, refs_count):
     ref_link = await get_ref_link(context, inviter_id)
 
-    # 1 друг
     if refs_count == 1:
         await context.bot.send_message(
             chat_id=inviter_id,
@@ -28,7 +27,6 @@ async def notify_inviter(context, inviter_id, refs_count):
             reply_markup=share_keyboard(ref_link)
         )
 
-    # 2 друга — первый бонус
     elif refs_count == REFERRALS_FOR_BONUS_1:
         await context.bot.send_message(
             chat_id=inviter_id,
@@ -44,7 +42,6 @@ async def notify_inviter(context, inviter_id, refs_count):
             reply_markup=share_keyboard(ref_link)
         )
 
-    # 3–4 друга на втором уровне
     elif REFERRALS_FOR_BONUS_1 < refs_count < REFERRALS_FOR_BONUS_2:
         done_on_level2 = refs_count - REFERRALS_FOR_BONUS_1
         remaining = REFERRALS_FOR_BONUS_2 - refs_count
@@ -60,7 +57,6 @@ async def notify_inviter(context, inviter_id, refs_count):
             reply_markup=share_keyboard(ref_link)
         )
 
-    # 5 друзей — второй бонус
     elif refs_count == REFERRALS_FOR_BONUS_2:
         await context.bot.send_message(
             chat_id=inviter_id,
