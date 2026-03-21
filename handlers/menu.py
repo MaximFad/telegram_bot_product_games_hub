@@ -1,33 +1,14 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
-from config import (
-    LINKS,
-    CHANNEL_ID,
-    REFERRALS_FOR_BONUS_1,
-    REFERRALS_FOR_BONUS_2,
-)
+from config import LINKS, CHANNEL_ID, REFERRALS_FOR_BONUS_1
 from sheets import count_referrals
 from referrals import get_ref_link, share_keyboard
 
 
 def get_level_name(count: int) -> str:
-    if count < 2:
+    if count < REFERRALS_FOR_BONUS_1:
         return "Новичок"
-    if 2 <= count < 5:
-        return "Продвинутый"
-    if 5 <= count < 10:
-        return "Соратник"
     return "Амбассадор канала"
-
-
-def get_next_level_target(count: int) -> tuple[str | None, int | None]:
-    if count < 2:
-        return "Продвинутый", 2
-    if 2 <= count < 5:
-        return "Соратник", 5
-    if 5 <= count < 10:
-        return "Амбассадор канала", 10
-    return None, None
 
 
 async def materials_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -60,53 +41,16 @@ async def check_and_send(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
             level_name = get_level_name(count)
 
-            # Базовый кейс: обычный материал + реф-миссия
-            if key.startswith("link_"):
-                await query.message.reply_text(
-                    f"✅ Достижение получено, разблокирован документ {name}:\n"
-                    f"{link}\n\n"
-                    "🎁 Миссия: поднять уровень персонажа\n"
-                    "🎯 Цель: пригласить 2 друзей по своей ссылке и открыть первый секретный бонус.\n"
-                    f"🏅 Текущий уровень: {level_name}\n"
-                    f"👥 Прогресс: {count} из {REFERRALS_FOR_BONUS_1} приглашённых\n"
-                    f"🔗 Твоя ссылка:\n{ref_link}",
-                    reply_markup=share_keyboard(ref_link),
-                )
-                return
-
-            # Если это первый секретный бонус (например, key == "secret_1")
-            if key == "secret_1":
-                await query.message.reply_text(
-                    "✅ Достижение получено — ты выполнил реферальную миссию «Новичок»\n\n"
-                    f"🎁 Разблокирован первый секретный бонус:\n"
-                    f"🔒 {name}\n"
-                    f"{link}\n\n"
-                    "🏅 Новый уровень: «Продвинутый»\n"
-                    f"👥 Твои приглашённые: {count}\n\n"
-                    "Следующая цель: дойти до уровня «Амбассадор канала» и открыть второй секретный бонус.",
-                    reply_markup=share_keyboard(ref_link),
-                )
-                return
-
-            # Второй секретный бонус (например, key == "secret_2")
-            if key == "secret_2":
-                await query.message.reply_text(
-                    "✅ Достижение получено — ты закрыл реферальную миссию «Продвинутый»\n\n"
-                    f"🎁 Разблокирован второй секретный бонус:\n"
-                    f"🔒 {name}\n"
-                    f"{link}\n\n"
-                    "🏅 Новый уровень: «Амбассадор канала»\n"
-                    f"👥 Всего приглашённых: {count}\n\n"
-                    "Ты открыл все текущие секретные материалы Product Games Hub.",
-                    reply_markup=share_keyboard(ref_link),
-                )
-                return
-
-            # Фолбек, если появятся другие ключи
             await query.message.reply_text(
-                f"✅ Достижение получено, материал {name} разблокирован:\n{link}"
+                f"✅ Достижение получено, разблокирован документ {name}:\n"
+                f"{link}\n\n"
+                "🎁 Миссия: поднять уровень персонажа\n"
+                "🎯 Цель: пригласить 2 друзей по своей ссылке и открыть первый секретный бонус.\n"
+                f"🏅 Текущий уровень: {level_name}\n"
+                f"👥 Прогресс: {count} из {REFERRALS_FOR_BONUS_1} приглашённых\n"
+                f"🔗 Твоя ссылка:\n{ref_link}",
+                reply_markup=share_keyboard(ref_link),
             )
-
         else:
             keyboard = [
                 [
