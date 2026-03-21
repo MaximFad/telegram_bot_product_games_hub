@@ -4,8 +4,8 @@ import json
 
 def get_env(name: str, default=None, required: bool = True):
     value = os.environ.get(name, default)
-    if required and value in (None, ""):
-        raise RuntimeError(f"Environment variable '{name}' is required")
+    if required and (value is None or value == ""):
+        raise RuntimeError(f"Missing required environment variable: {name}")
     return value
 
 
@@ -29,4 +29,7 @@ BONUS_LINKS = {
     2: get_env("BONUS_LINK_2"),
 }
 
-GOOGLE_CREDENTIALS = json.loads(get_env("GOOGLE_CREDENTIALS"))
+try:
+    GOOGLE_CREDENTIALS = json.loads(get_env("GOOGLE_CREDENTIALS"))
+except json.JSONDecodeError as e:
+    raise RuntimeError(f"GOOGLE_CREDENTIALS invalid JSON: {e}")
