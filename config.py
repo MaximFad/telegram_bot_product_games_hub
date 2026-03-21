@@ -1,24 +1,32 @@
 import os
 import json
 
-TOKEN = os.environ["TOKEN"]
-CHANNEL_ID = int(os.environ["CHANNEL_ID"])
-ADMIN_ID = int(os.environ["ADMIN_ID"])
-SHEET_ID = os.environ["GOOGLE_SHEET_ID"]
 
-REFERRALS_FOR_BONUS_1 = 2
-REFERRALS_FOR_BONUS_2 = 5
+def get_env(name: str, default=None, required: bool = True):
+    value = os.environ.get(name, default)
+    if required and value in (None, ""):
+        raise RuntimeError(f"Environment variable '{name}' is required")
+    return value
+
+
+TOKEN = get_env("TOKEN")
+CHANNEL_ID = int(get_env("CHANNEL_ID"))
+ADMIN_ID = int(get_env("ADMIN_ID"))
+SHEET_ID = get_env("GOOGLE_SHEET_ID")
+
+REFERRALS_FOR_BONUS_1 = int(get_env("REFERRALS_FOR_BONUS_1", 2, required=False))
+REFERRALS_FOR_BONUS_2 = int(get_env("REFERRALS_FOR_BONUS_2", 5, required=False))
 
 LINKS = {
-    "link_1": (os.environ["LINK_1"], "📊 Инструменты для анализа игр"),
-    "link_2": (os.environ["LINK_2"], "Пример карточки проекта"),
-    "link_3": (os.environ["LINK_3"], "Пример отличного туториала"),
-    "link_4": (os.environ["LINK_4"], "Статьи на Teletype"),
+    "link_1": (get_env("LINK_1"), "📊 Инструменты для анализа игр"),
+    "link_2": (get_env("LINK_2"), "📄 Пример карточки проекта"),
+    "link_3": (get_env("LINK_3"), "🎓 Пример отличного туториала"),
+    "link_4": (get_env("LINK_4"), "📝 Статьи на Teletype"),
 }
 
 BONUS_LINKS = {
-    1: os.environ["BONUS_LINK"],
-    2: os.environ["BONUS_LINK_2"],
+    1: get_env("BONUS_LINK"),
+    2: get_env("BONUS_LINK_2"),
 }
 
-GOOGLE_CREDENTIALS = json.loads(os.environ["GOOGLE_CREDENTIALS"])
+GOOGLE_CREDENTIALS = json.loads(get_env("GOOGLE_CREDENTIALS"))
