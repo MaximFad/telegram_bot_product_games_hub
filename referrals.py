@@ -56,6 +56,7 @@ async def notify_inviter(context, inviter_id: int, refs_count: int):
 
     elif REFERRALS_FOR_BONUS_1 < refs_count < REFERRALS_FOR_BONUS_2:
         done_on_level2 = refs_count - REFERRALS_FOR_BONUS_1
+        total_on_level2 = REFERRALS_FOR_BONUS_2 - REFERRALS_FOR_BONUS_1
         remaining = REFERRALS_FOR_BONUS_2 - refs_count
 
         await context.bot.send_message(
@@ -63,8 +64,8 @@ async def notify_inviter(context, inviter_id: int, refs_count: int):
             text=(
                 "🙌 Ещё один друг присоединился!\n\n"
                 "Текущий уровень: «Инсайдер»\n"
-                f"👥 Прогресс: {done_on_level2} из {REFERRALS_FOR_BONUS_2 - REFERRALS_FOR_BONUS_1}\n"
-                f"Осталось пригласить: {remaining} до супер-секретного бонуса.\n\n"
+                f"👥 Прогресс: {done_on_level2} из {total_on_level2}\n"
+                f"Осталось пригласить: {remaining}\n\n"
                 f"🔗 Твоя ссылка:\n{ref_link}"
             ),
             reply_markup=share_keyboard(ref_link),
@@ -78,6 +79,6 @@ async def notify_inviter(context, inviter_id: int, refs_count: int):
                 f"Ты пригласил {REFERRALS_FOR_BONUS_2} друзей и открыл все секретные материалы.\n\n"
                 "Вот твой супер-секретный бонус:\n"
                 f"🔗 {BONUS_LINKS[2]}\n\n"
-                "Спасибо, что помогаешь развивать канал — ты в элите Product Games Hub 💪"
+                "Спасибо, что помогаешь развивать канал."
             ),
         )
