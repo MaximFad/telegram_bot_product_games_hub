@@ -1,6 +1,11 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
-from config import LINKS, CHANNEL_ID, REFERRALS_FOR_BONUS_1
+from config import (
+    LINKS,
+    CHANNEL_ID,
+    REFERRALS_FOR_BONUS_1,
+    REFERRALS_FOR_BONUS_2,
+)
 from sheets import count_referrals
 from referrals import get_ref_link, share_keyboard
 
@@ -8,7 +13,17 @@ from referrals import get_ref_link, share_keyboard
 def get_level_name(count: int) -> str:
     if count < REFERRALS_FOR_BONUS_1:
         return "Новичок"
+    elif count < REFERRALS_FOR_BONUS_2:
+        return "Инсайдер"
     return "Амбассадор канала"
+
+
+def get_next_level_target(count: int) -> tuple[str | None, int | None]:
+    if count < REFERRALS_FOR_BONUS_1:
+        return "Инсайдер", REFERRALS_FOR_BONUS_1
+    elif count < REFERRALS_FOR_BONUS_2:
+        return "Амбассадор канала", REFERRALS_FOR_BONUS_2
+    return None, None
 
 
 async def materials_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
