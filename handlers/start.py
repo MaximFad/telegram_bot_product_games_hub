@@ -1,6 +1,6 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
-from config import LINKS, ADMIN_ID
+from config import LINKS, ADMIN_ID, REFERRALS_FOR_BONUS_1, REFERRALS_FOR_BONUS_2
 from sheets import save_user, save_referral, count_referrals
 from referrals import notify_inviter
 
@@ -15,6 +15,14 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             refs_count = count_referrals(inviter_id)
             await notify_inviter(context, inviter_id, refs_count)
 
+    refs_count = count_referrals(user.id)
+    if refs_count >= REFERRALS_FOR_BONUS_2:
+        player_level = "Амбассадор канала"
+    elif refs_count >= REFERRALS_FOR_BONUS_1:
+        player_level = "Инсайдер"
+    else:
+        player_level = "Новичок"
+
     keyboard = []
     keyboard.append([InlineKeyboardButton("📂 Таблицы и документы", callback_data="materials_menu")])
     keyboard.append([InlineKeyboardButton("🎯 Миссии и награды", callback_data="my_refs")])
@@ -24,6 +32,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.effective_message.reply_text(
         "👋 Привет! Это Product Games Hub.\n\n"
-        "Выбери, что тебе сейчас важно:",
+        f"🏅 Твой уровень: «{player_level}»\n"
+        "🎯 Миссия: дойти до «Амбассадора канала» и открыть все секретные материалы\n\n"
+        "Выбери материал который хочешь получить:",
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
