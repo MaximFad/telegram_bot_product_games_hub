@@ -24,9 +24,7 @@ def build_app():
     app = ApplicationBuilder().token(TOKEN).build()
 
     conv_handler = ConversationHandler(
-        entry_points=[
-            CallbackQueryHandler(ask_broadcast_text, pattern="^do_broadcast$")
-        ],
+        entry_points=[CallbackQueryHandler(ask_broadcast_text, pattern="^do_broadcast$")],
         states={
             WAITING_BROADCAST: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, do_broadcast)
@@ -42,7 +40,6 @@ def build_app():
     app.add_handler(CallbackQueryHandler(my_refs, pattern="^my_refs$"))
     app.add_handler(CallbackQueryHandler(admin_panel, pattern="^admin_panel$"))
     app.add_handler(CallbackQueryHandler(stats, pattern="^stats$"))
-
     app.add_handler(CallbackQueryHandler(check_and_send, pattern="^(link_|secret_)"))
     app.add_handler(CallbackQueryHandler(start, pattern="^back_to_menu$"))
 
