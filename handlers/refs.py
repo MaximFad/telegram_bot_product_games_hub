@@ -2,8 +2,8 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from sheets import count_referrals
 from referrals import get_ref_link
-from config import REFERRALS_FOR_BONUS_1
-from handlers.menu import get_level_name
+from config import REFERRALS_FOR_BONUS_1, REFERRALS_FOR_BONUS_2
+from handlers.menu import get_level_name, get_next_level_target
 
 
 async def my_refs(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -13,15 +13,27 @@ async def my_refs(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = query.from_user.id
     count = count_referrals(user_id)
     ref_link = await get_ref_link(context, user_id)
+
     level_name = get_level_name(count)
+    next_level_name, next_threshold = get_next_level_target(count)
 
     text = (
         "👋 Это твоя реферальная панель.\n\n"
         f"🏅 Текущий уровень: «{level_name}»\n"
-        f"👥 Твои приглашённые: {count}\n"
-        f"🎯 Цель: пригласить 2 друзей и открыть первый секретный бонус.\n\n"
-        f"🔗 Твоя ссылка:\n{ref_link}"
+        f"👥 Твои приглашённые: {count}\n\n"
+        f"🔗 Твоя ссылка:\n{ref_link}\n\n"
     )
+
+    if next_level_name and next_threshold:
+        text += (
+            f"🎯 Цель: дойти до уровня «{next_level_name}» и набрать {next_threshold} приглашённых.\n"
+            "За уровни открываются секретные бонусы и материалы."
+        )
+    else:
+        text += (
+            "🎯 Ты на максимальном уровне «Амбассадор канала».\n"
+            "Дальше будут временные челленджи и сезонные бонусы для амбассадоров."
+        )
 
     keyboard = [
         [InlineKeyboardButton("📤 Поделиться ссылкой", switch_inline_query=ref_link)],
