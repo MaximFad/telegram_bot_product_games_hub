@@ -45,7 +45,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not is_subscribed:
         keyboard = [
             [InlineKeyboardButton(BotTexts.BTN_SUBSCRIBE, url=f"https://t.me/{CHANNEL_USERNAME}")],
-            [InlineKeyboardButton(BotTexts.BTN_CHECK_SUBSCRIBE, callback_data="link_1")],
+            [InlineKeyboardButton(BotTexts.BTN_CHECK_SUBSCRIBE, callback_data="check_subscription")],
         ]
         text = BotTexts.not_subscribed(CHANNEL_USERNAME)
 
