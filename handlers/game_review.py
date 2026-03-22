@@ -54,7 +54,8 @@ async def open_game_review(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return ConversationHandler.END
 
     keyboard = InlineKeyboardMarkup([
-        [InlineKeyboardButton(BotTexts.BTN_BACK, callback_data="back_to_menu")]
+    [InlineKeyboardButton(BotTexts.BTN_LEADERBOARD, callback_data="leaderboard")],
+    [InlineKeyboardButton(BotTexts.BTN_BACK, callback_data="back_to_menu")]
     ])
 
     await query.message.reply_text(
