@@ -4,7 +4,7 @@ from telegram.ext import ContextTypes
 from config import ADMIN_ID
 from sheets import save_user, save_referral, count_referrals
 from referrals import get_ref_link, notify_inviter
-from handlers.menu import get_level_name
+from content_texts import BotTexts, BotLogic
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -30,24 +30,18 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         await notify_inviter(context, inviter_id, refs_count)
 
     count = count_referrals(user_id)
-    level_name = get_level_name(count)
+    level_name = BotLogic.get_level_name(count)
     ref_link = await get_ref_link(context, user_id)
 
-    text = (
-        "Привет! Это Product Games Hub.\n\n"
-        f"🏅 Твой уровень: «{level_name}»\n"
-        "🎯 Миссия: дойти до «Амбассадора канала» и открыть все секретные материалы\n\n"
-        f"🔗 Твоя ссылка:\n{ref_link}\n\n"
-        "Выбери, с чего начать:"
-    )
+    text = BotTexts.main_menu(level_name, ref_link)
 
     keyboard = [
-        [InlineKeyboardButton("📂 Таблицы и документы", callback_data="materials_menu")],
-        [InlineKeyboardButton("📌 Мои реферальные ссылки", callback_data="my_refs")],
+        [InlineKeyboardButton(BotTexts.BTN_MATERIALS, callback_data="materials_menu")],
+        [InlineKeyboardButton(BotTexts.BTN_MY_REFS, callback_data="my_refs")],
     ]
 
     if user_id == ADMIN_ID:
-        keyboard.append([InlineKeyboardButton("🔧 Админ панель", callback_data="admin_panel")])
+        keyboard.append([InlineKeyboardButton(BotTexts.BTN_ADMIN, callback_data="admin_panel")])
 
     reply_markup = InlineKeyboardMarkup(keyboard)
 
