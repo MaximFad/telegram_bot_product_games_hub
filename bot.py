@@ -18,17 +18,32 @@ from handlers.admin import (
     do_broadcast,
     WAITING_BROADCAST,
 )
+from handlers.game_review import (
+    open_game_review,
+    receive_game_review,
+    WAITING_GAME_REVIEW,
+)
 
 
 def build_app():
     app = ApplicationBuilder().token(TOKEN).build()
 
     conv_handler = ConversationHandler(
-        entry_points=[CallbackQueryHandler(ask_broadcast_text, pattern="^do_broadcast$")],
+        entry_points=[
+            CallbackQueryHandler(ask_broadcast_text, pattern="^do_broadcast$"),
+            CallbackQueryHandler(open_game_review, pattern="^game_review$"),
+        ],
         states={
             WAITING_BROADCAST: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, do_broadcast)
-            ]
+            ],
+            WAITING_GAME_REVIEW: [
+                MessageHandler(
+                    (filters.TEXT | filters.PHOTO | filters.VIDEO | filters.Document.ALL)
+                    & ~filters.COMMAND,
+                    receive_game_review,
+                )
+            ],
         },
         fallbacks=[],
     )
