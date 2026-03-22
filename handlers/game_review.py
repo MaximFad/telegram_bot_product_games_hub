@@ -2,11 +2,12 @@ from datetime import datetime
 
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.constants import ParseMode
-from telegram.ext import ContextTypes, ConversationHandler, filters
+from telegram.ext import ContextTypes, ConversationHandler
 
 from config import ADMIN_ID
 from handlers.content_texts import BotTexts
 from handlers.menu import is_user_subscribed, send_subscription_required
+from sheets import save_game_review
 
 
 WAITING_GAME_REVIEW = 2
@@ -97,6 +98,11 @@ async def receive_game_review(update: Update, context: ContextTypes.DEFAULT_TYPE
             from_chat_id=message.chat_id,
             message_id=message.message_id,
         )
+    except Exception:
+        pass
+
+    try:
+        save_game_review(user, _extract_message_text(message))
     except Exception:
         pass
 
