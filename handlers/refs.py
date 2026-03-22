@@ -3,7 +3,7 @@ from telegram.ext import ContextTypes
 
 from sheets import count_referrals
 from referrals import get_ref_link
-from content_texts import BotTexts, BotLogic
+from handlers.content_texts import BotTexts, BotLogic
 
 
 async def my_refs(update: Update, context: ContextTypes.DEFAULT_TYPE):
