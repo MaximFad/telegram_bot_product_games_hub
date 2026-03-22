@@ -9,9 +9,9 @@ from config import (
     REFERRALS_FOR_BONUS_2,
     get_env,
 )
-from sheets import count_referrals
-from referrals import get_ref_link, share_keyboard
-from content_texts import BotTexts, BotLogic
+from sheets import count_referrals, confirm_pending_referral
+from referrals import get_ref_link, share_keyboard, notify_inviter
+from handlers.content_texts import BotTexts, BotLogic
 
 
 CHANNEL_USERNAME = get_env("CHANNEL_USERNAME", "product_games_hub", required=False)
@@ -60,6 +60,11 @@ async def check_and_send(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 reply_markup=InlineKeyboardMarkup(keyboard),
             )
             return
+
+        inviter_id = confirm_pending_referral(user_id)
+        if inviter_id:
+            refs_count = count_referrals(inviter_id)
+            await notify_inviter(context, inviter_id, refs_count)
 
         ref_link = await get_ref_link(context, user_id)
         count = count_referrals(user_id)
