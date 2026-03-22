@@ -10,7 +10,7 @@ from telegram.ext import (
 from config import TOKEN
 from handlers.start import start
 from handlers.refs import my_refs
-from handlers.menu import materials_menu, check_and_send
+from handlers.menu import materials_menu, check_and_send, check_subscription, show_main_menu
 from handlers.admin import (
     admin_panel,
     stats,
@@ -40,8 +40,10 @@ def build_app():
     app.add_handler(CallbackQueryHandler(my_refs, pattern="^my_refs$"))
     app.add_handler(CallbackQueryHandler(admin_panel, pattern="^admin_panel$"))
     app.add_handler(CallbackQueryHandler(stats, pattern="^stats$"))
+
+    app.add_handler(CallbackQueryHandler(check_subscription, pattern="^check_subscription$"))
     app.add_handler(CallbackQueryHandler(check_and_send, pattern="^(link_|secret_)"))
-    app.add_handler(CallbackQueryHandler(start, pattern="^back_to_menu$"))
+    app.add_handler(CallbackQueryHandler(show_main_menu, pattern="^back_to_menu$"))
 
     return app
 
