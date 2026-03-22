@@ -5,6 +5,7 @@ from config import ADMIN_ID, CHANNEL_ID, get_env
 from sheets import save_user, count_referrals, confirm_pending_referral
 from referrals import get_ref_link, notify_inviter
 from handlers.content_texts import BotTexts, BotLogic
+from handlers.menu import send_subscription_required
 
 
 CHANNEL_USERNAME = get_env("CHANNEL_USERNAME", "product_games_hub", required=False)
@@ -43,20 +44,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         is_subscribed = False
 
     if not is_subscribed:
-        keyboard = [
-            [InlineKeyboardButton(BotTexts.BTN_SUBSCRIBE, url=f"https://t.me/{CHANNEL_USERNAME}")],
-            [InlineKeyboardButton(BotTexts.BTN_CHECK_SUBSCRIBE, callback_data="check_subscription")],
-        ]
-        text = BotTexts.not_subscribed(CHANNEL_USERNAME)
-
-        reply_markup = InlineKeyboardMarkup(keyboard)
-
-        if update.message:
-            await update.message.reply_text(text, reply_markup=reply_markup)
-        else:
-            query = update.callback_query
-            await query.answer()
-            await query.message.reply_text(text, reply_markup=reply_markup)
+        await send_subscription_required(update, context, first_time=True)
         return
 
     inviter_id = confirm_pending_referral(user_id)
