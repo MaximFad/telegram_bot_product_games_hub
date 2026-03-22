@@ -37,7 +37,6 @@ async def show_leaderboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.reply_text(
             "🏆 Лидерборд\n\n"
             "Очки начисляются так:\n"
-            "👍 Лайк — 10 очков\n"
             "💬 Комментарий — 20 очков\n"
             "👥 Приглашённый друг — 40 очков\n\n"
             "Твои очки: 0\n"
@@ -62,7 +61,6 @@ async def show_leaderboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "🏆 Лидерборд",
         "",
         "Очки начисляются так:",
-        "👍 Лайк — 10 очков",
         "💬 Комментарий — 20 очков",
         "👥 Приглашённый друг — 40 очков",
         "",
