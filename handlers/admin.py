@@ -3,6 +3,7 @@ from telegram.ext import ContextTypes, ConversationHandler
 
 from config import ADMIN_ID
 from sheets import load_users, get_all_refs
+from content_texts import BotTexts
 
 
 WAITING_BROADCAST = 1
@@ -17,16 +18,16 @@ async def admin_panel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
 
     if not is_admin(query.from_user.id):
-        await query.message.reply_text("❌ У тебя нет доступа к админ-панели.")
+        await query.message.reply_text(BotTexts.no_admin_panel_access())
         return
 
     keyboard = [
-        [InlineKeyboardButton("📢 Сделать рассылку", callback_data="do_broadcast")],
-        [InlineKeyboardButton("📊 Статистика", callback_data="stats")],
+        [InlineKeyboardButton(BotTexts.BTN_BROADCAST, callback_data="do_broadcast")],
+        [InlineKeyboardButton(BotTexts.BTN_STATS, callback_data="stats")],
     ]
 
     await query.message.reply_text(
-        "🔧 Админ-панель:",
+        BotTexts.admin_panel(),
         reply_markup=InlineKeyboardMarkup(keyboard),
     )
 
@@ -36,15 +37,14 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
 
     if not is_admin(query.from_user.id):
-        await query.message.reply_text("❌ У тебя нет доступа к статистике.")
+        await query.message.reply_text(BotTexts.no_stats_access())
         return
 
     users = load_users()
     refs = get_all_refs()
 
     await query.message.reply_text(
-        f"📊 Всего пользователей: {len(users)}\n"
-        f"🔗 Всего рефералов: {len(refs)}"
+        BotTexts.admin_stats(len(users), len(refs))
     )
 
 
@@ -53,16 +53,16 @@ async def ask_broadcast_text(update: Update, context: ContextTypes.DEFAULT_TYPE)
     await query.answer()
 
     if not is_admin(query.from_user.id):
-        await query.message.reply_text("❌ У тебя нет доступа к рассылке.")
+        await query.message.reply_text(BotTexts.no_broadcast_access())
         return ConversationHandler.END
 
-    await query.message.reply_text("✏️ Напиши текст рассылки:")
+    await query.message.reply_text(BotTexts.ask_broadcast_text())
     return WAITING_BROADCAST
 
 
 async def do_broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != ADMIN_ID:
-        await update.message.reply_text("❌ У тебя нет доступа к рассылке.")
+        await update.message.reply_text(BotTexts.no_broadcast_access())
         return ConversationHandler.END
 
     text = update.message.text
@@ -76,5 +76,7 @@ async def do_broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
         except Exception:
             pass
 
-    await update.message.reply_text(f"✅ Отправлено {success}/{len(users)}")
+    await update.message.reply_text(
+        BotTexts.broadcast_done(success, len(users))
+    )
     return ConversationHandler.END
