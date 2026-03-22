@@ -34,3 +34,5 @@ try:
     GOOGLE_CREDENTIALS = json.loads(get_env("GOOGLE_CREDENTIALS"))
 except json.JSONDecodeError as e:
     raise RuntimeError(f"GOOGLE_CREDENTIALS invalid JSON: {e}")
+
+DISCUSSION_GROUP_ID = int(get_env("DISCUSSION_GROUP_ID", 0, required=False))
