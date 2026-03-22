@@ -179,3 +179,29 @@ def count_referrals(user_id: int) -> int:
 def get_all_refs() -> list[str]:
     sheet_refs = get_refs_sheet()
     return sheet_refs.col_values(1)[1:]
+
+
+from datetime import datetime
+
+
+def get_game_reviews_sheet():
+    return get_spreadsheet().worksheet("game_reviews")
+
+
+def save_game_review(user, message_text: str):
+    sheet = get_game_reviews_sheet()
+
+    username = user.username or ""
+    first_name = user.first_name or ""
+    last_name = user.last_name or ""
+    contact = f"@{user.username}" if user.username else f"tg://user?id={user.id}"
+
+    sheet.append_row([
+        datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        user.id,
+        username,
+        first_name,
+        last_name,
+        contact,
+        message_text or "",
+    ])
