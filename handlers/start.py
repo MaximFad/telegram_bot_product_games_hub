@@ -1,10 +1,13 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 
-from config import ADMIN_ID
-from sheets import save_user, count_referrals
-from referrals import get_ref_link
+from config import ADMIN_ID, CHANNEL_ID, get_env
+from sheets import save_user, count_referrals, confirm_pending_referral
+from referrals import get_ref_link, notify_inviter
 from handlers.content_texts import BotTexts, BotLogic
+
+
+CHANNEL_USERNAME = get_env("CHANNEL_USERNAME", "product_games_hub", required=False)
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -32,6 +35,34 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     pending_inviter_id = inviter_id
 
     save_user(user, pending_inviter_id=pending_inviter_id)
+
+    try:
+        member = await context.bot.get_chat_member(CHANNEL_ID, user_id)
+        is_subscribed = member.status in ("member", "administrator", "creator")
+    except Exception:
+        is_subscribed = False
+
+    if not is_subscribed:
+        keyboard = [
+            [InlineKeyboardButton(BotTexts.BTN_SUBSCRIBE, url=f"https://t.me/{CHANNEL_USERNAME}")],
+            [InlineKeyboardButton(BotTexts.BTN_CHECK_SUBSCRIBE, callback_data="link_1")],
+        ]
+        text = BotTexts.not_subscribed(CHANNEL_USERNAME)
+
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
+        if update.message:
+            await update.message.reply_text(text, reply_markup=reply_markup)
+        else:
+            query = update.callback_query
+            await query.answer()
+            await query.message.reply_text(text, reply_markup=reply_markup)
+        return
+
+    inviter_id = confirm_pending_referral(user_id)
+    if inviter_id:
+        refs_count = count_referrals(inviter_id)
+        await notify_inviter(context, inviter_id, refs_count)
 
     count = count_referrals(user_id)
     level_name = BotLogic.get_level_name(count)
