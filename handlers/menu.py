@@ -50,7 +50,6 @@ async def send_subscription_required(
 
     if update.callback_query:
         query = update.callback_query
-        await query.answer()
         await query.message.reply_text(text, reply_markup=reply_markup)
         return
 
@@ -91,7 +90,6 @@ async def show_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if update.callback_query:
         query = update.callback_query
-        await query.answer()
         await query.message.reply_text(text, reply_markup=reply_markup)
         return True
 
@@ -103,6 +101,8 @@ async def show_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def check_subscription(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
     await show_main_menu(update, context)
 
 
