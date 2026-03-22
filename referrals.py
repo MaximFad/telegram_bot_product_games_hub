@@ -1,7 +1,7 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 from config import REFERRALS_FOR_BONUS_1, REFERRALS_FOR_BONUS_2, BONUS_LINKS
-from content_texts import BotTexts
+from handlers.content_texts import BotTexts
 
 
 async def get_ref_link(context, user_id: int) -> str:
