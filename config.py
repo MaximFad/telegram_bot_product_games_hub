@@ -22,6 +22,7 @@ LINKS = {
     "link_2": (get_env("LINK_2"), "📄 Пример карточки проекта"),
     "link_3": (get_env("LINK_3"), "🎓 Пример отличного туториала"),
     "link_4": (get_env("LINK_4"), "📝 Статьи на Teletype"),
+    "link_5": (get_env("LINK_5"), "🎭 Ролевая модель игры"),
 }
 
 BONUS_LINKS = {
