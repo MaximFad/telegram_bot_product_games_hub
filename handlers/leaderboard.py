@@ -35,14 +35,41 @@ async def show_leaderboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if not leaders:
         await query.message.reply_text(
-            BotTexts.leaderboard_empty(),
+            "🏆 Лидерборд\n\n"
+            "Очки начисляются так:\n"
+            "👍 Лайк — 10 очков\n"
+            "💬 Комментарий — 20 очков\n"
+            "👥 Приглашённый друг — 40 очков\n\n"
+            "Твои очки: 0\n"
+            "Твоё место: —\n\n"
+            "Пока лидеров нет.",
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton(BotTexts.BTN_BACK, callback_data="back_to_menu")]
             ]),
         )
         return
 
-    lines = [BotTexts.leaderboard_intro(), ""]
+    my_points = 0
+    my_rank = "—"
+
+    for index, item in enumerate(leaders):
+        if item["user_id"] == user_id:
+            my_points = item["points"]
+            my_rank = index + 1
+            break
+
+    lines = [
+        "🏆 Лидерборд",
+        "",
+        "Очки начисляются так:",
+        "👍 Лайк — 10 очков",
+        "💬 Комментарий — 20 очков",
+        "👥 Приглашённый друг — 40 очков",
+        "",
+        f"Твои очки: {my_points}",
+        f"Твоё место: {my_rank}",
+        "",
+    ]
 
     top3 = leaders[:3]
     medals = ["🥇", "🥈", "🥉"]
