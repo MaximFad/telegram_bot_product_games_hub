@@ -3,7 +3,7 @@ from telegram.ext import ContextTypes, ConversationHandler
 
 from config import ADMIN_ID
 from sheets import load_users, get_all_refs
-from content_texts import BotTexts
+from handlers.content_texts import BotTexts
 
 
 WAITING_BROADCAST = 1
