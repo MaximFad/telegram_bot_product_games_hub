@@ -11,8 +11,30 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     user_id = user.id
 
+    # ---------------------------------------------------------
+    # ЗАЩИТА ОТ БОТОВ
+    # Если в бота зашёл telegram-бот, не засчитываем его как реферала
+    # и вообще не даём ему участвовать в реферальной механике.
+    # ---------------------------------------------------------
+    if user.is_bot:
+        if update.message:
+            await update.message.reply_text("❌ Боты не участвуют в реферальной программе.")
+        else:
+            query = update.callback_query
+            await query.answer()
+            await query.message.reply_text("❌ Боты не участвуют в реферальной программе.")
+        return
+
     is_new_user = save_user(user)
 
+    # ---------------------------------------------------------
+    # ОБРАБОТКА РЕФЕРАЛКИ
+    # Засчитываем только:
+    # - нового пользователя
+    # - не бота
+    # - если есть ref_...
+    # - если не сам себя пригласил
+    # ---------------------------------------------------------
     if context.args and is_new_user:
         arg = context.args[0]
 
