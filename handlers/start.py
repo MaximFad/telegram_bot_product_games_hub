@@ -59,8 +59,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = BotTexts.main_menu(level_name, ref_link)
 
     keyboard = [
-        [InlineKeyboardButton(BotTexts.BTN_MATERIALS, callback_data="materials_menu")],
-        [InlineKeyboardButton(BotTexts.BTN_MY_REFS, callback_data="my_refs")],
+    [InlineKeyboardButton(BotTexts.BTN_MATERIALS, callback_data="materials_menu")],
+    [InlineKeyboardButton(BotTexts.BTN_MY_REFS, callback_data="my_refs")],
+    [InlineKeyboardButton(BotTexts.BTN_GAME_REVIEW, callback_data="game_review")],
     ]
 
     if user_id == ADMIN_ID:
