@@ -4,6 +4,7 @@ from telegram.ext import ContextTypes
 from sheets import count_referrals
 from referrals import get_ref_link
 from handlers.content_texts import BotTexts, BotLogic
+from handlers.menu import is_user_subscribed, send_subscription_required
 
 
 async def my_refs(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -11,6 +12,11 @@ async def my_refs(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
 
     user_id = query.from_user.id
+
+    if not await is_user_subscribed(context, user_id):
+        await send_subscription_required(update, context)
+        return
+
     count = count_referrals(user_id)
     ref_link = await get_ref_link(context, user_id)
 
