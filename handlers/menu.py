@@ -117,6 +117,10 @@ async def materials_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
             InlineKeyboardButton(BotTexts.BONUS_2_MENU_TITLE, callback_data="secret_2")
         ])
 
+    keyboard.append([
+        InlineKeyboardButton(BotTexts.BTN_BACK, callback_data="back_to_menu")
+    ])
+
     await query.message.reply_text(
         BotTexts.materials_menu(),
         reply_markup=InlineKeyboardMarkup(keyboard),
