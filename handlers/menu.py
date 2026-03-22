@@ -12,7 +12,12 @@ from config import (
 )
 from sheets import count_referrals, confirm_pending_referral
 from referrals import get_ref_link, share_keyboard, notify_inviter
-from handlers.content_texts import BotTexts, BotLogic
+from handlers.content_texts import (
+    BotTexts,
+    BotLogic,
+    FIRST_NOT_SUBSCRIBED_TEXT,
+    REPEAT_NOT_SUBSCRIBED_TEXT,
+)
 
 
 CHANNEL_USERNAME = get_env("CHANNEL_USERNAME", "product_games_hub", required=False)
@@ -26,13 +31,22 @@ async def is_user_subscribed(context: ContextTypes.DEFAULT_TYPE, user_id: int) -
         return False
 
 
-async def send_subscription_required(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def send_subscription_required(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE,
+    first_time: bool = False,
+):
     keyboard = [
         [InlineKeyboardButton(BotTexts.BTN_SUBSCRIBE, url=f"https://t.me/{CHANNEL_USERNAME}")],
         [InlineKeyboardButton(BotTexts.BTN_CHECK_SUBSCRIBE, callback_data="check_subscription")],
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    text = BotTexts.not_subscribed(CHANNEL_USERNAME)
+
+    text = (
+        FIRST_NOT_SUBSCRIBED_TEXT
+        if first_time
+        else REPEAT_NOT_SUBSCRIBED_TEXT.format(channel_username=CHANNEL_USERNAME)
+    )
 
     if update.callback_query:
         query = update.callback_query
