@@ -3,7 +3,7 @@ from telegram.ext import ContextTypes
 
 from sheets import count_referrals
 from referrals import get_ref_link
-from handlers.menu import get_level_name, get_next_level_target
+from content_texts import BotTexts, BotLogic
 
 
 async def my_refs(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -14,30 +14,20 @@ async def my_refs(update: Update, context: ContextTypes.DEFAULT_TYPE):
     count = count_referrals(user_id)
     ref_link = await get_ref_link(context, user_id)
 
-    level_name = get_level_name(count)
-    next_level_name, next_threshold = get_next_level_target(count)
+    level_name = BotLogic.get_level_name(count)
+    next_level_name, next_threshold = BotLogic.get_next_level_target(count)
 
-    text = (
-        "👋 Это твоя реферальная панель.\n\n"
-        f"🏅 Текущий уровень: «{level_name}»\n"
-        f"👥 Твои приглашённые: {count}\n\n"
-        f"🔗 Твоя ссылка:\n{ref_link}\n\n"
+    text = BotTexts.refs_panel(
+        current_level=level_name,
+        current_refs=count,
+        ref_link=ref_link,
+        next_level_name=next_level_name,
+        next_level_target=next_threshold,
     )
 
-    if next_level_name and next_threshold:
-        text += (
-            f"🎯 Цель: дойти до уровня «{next_level_name}» и набрать {next_threshold} приглашённых.\n"
-            "За уровни открываются секретные бонусы и материалы."
-        )
-    else:
-        text += (
-            "🎯 Ты на максимальном уровне «Амбассадор канала».\n"
-            "Дальше будут временные челленджи и сезонные бонусы."
-        )
-
     keyboard = [
-        [InlineKeyboardButton("📤 Поделиться ссылкой", switch_inline_query=ref_link)],
-        [InlineKeyboardButton("⬅️ Вернуться в меню", callback_data="back_to_menu")],
+        [InlineKeyboardButton(BotTexts.BTN_SHARE, switch_inline_query=ref_link)],
+        [InlineKeyboardButton(BotTexts.BTN_BACK, callback_data="back_to_menu")],
     ]
 
     await query.message.reply_text(
