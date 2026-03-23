@@ -1,3 +1,4 @@
+from urllib.parse import quote
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 from config import REFERRALS_FOR_BONUS_1, REFERRALS_FOR_BONUS_2, BONUS_LINKS
@@ -10,6 +11,11 @@ async def get_ref_link(context, user_id: int) -> str:
 
 
 def share_keyboard(ref_link: str) -> InlineKeyboardMarkup:
+    share_text = quote(
+        "Привет! Нашёл крутой телеграм канал по геймдеву.\n\n"
+        "Есть интересные темы, думаю тебе понравится, у бота можно получить все доки сразу, вот:"
+    )
+
     return InlineKeyboardMarkup(
         [[
             InlineKeyboardButton(
@@ -17,12 +23,11 @@ def share_keyboard(ref_link: str) -> InlineKeyboardMarkup:
                 url=(
                     "https://t.me/share/url"
                     f"?url={ref_link}"
-                    "&text=Забери%20бесплатные%20материалы%20по%20gamedev%20👇"
+                    f"&text={share_text}"
                 ),
             )
         ]]
     )
-
 
 async def notify_inviter(context, inviter_id: int, refs_count: int):
     ref_link = await get_ref_link(context, inviter_id)
