@@ -12,7 +12,7 @@ async def get_ref_link(context, user_id: int) -> str:
 
 def share_keyboard(ref_link: str) -> InlineKeyboardMarkup:
     share_text = quote(
-        "Привет! Нашёл крутой телеграм канал по геймдеву.\n\n"
+        "Привет! Нашёл крутой телеграм канал по геймдеву.\n"
         "Есть интересные темы, думаю тебе понравится, у бота можно получить все доки сразу, вот:"
     )
 
