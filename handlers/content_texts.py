@@ -60,7 +60,7 @@ class BotTexts:
     BTN_ADMIN = "🛠 Админ панель"
     BTN_SUBSCRIBE = "Подписаться на канал"
     BTN_CHECK_SUBSCRIBE = "✅ Я подписался"
-    BTN_SHARE = "📤 Поделиться ссылкой"
+    BTN_SHARE = "📤 Поделиться ссылкой с другом"
     BTN_SHARE_WITH_FRIEND = "📤 Отправить другу"
     BTN_BACK = "⬅️ Вернуться в меню"
     BTN_BROADCAST = "📢 Сделать рассылку"
