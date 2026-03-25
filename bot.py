@@ -41,13 +41,22 @@ def build_app():
             ],
             WAITING_GAME_REVIEW: [
                 MessageHandler(
-                    (filters.TEXT | filters.PHOTO | filters.VIDEO | filters.Document.ALL)
+                    (
+                        filters.TEXT
+                        | filters.PHOTO
+                        | filters.VIDEO
+                        | filters.Document.ALL
+                    )
                     & ~filters.COMMAND,
                     receive_game_review,
                 )
             ],
         },
-        fallbacks=[],
+        fallbacks=[
+            CommandHandler("start", start),
+            CallbackQueryHandler(show_main_menu, pattern="^back_to_menu$"),
+        ],
+        allow_reentry=True,
     )
 
     app.add_handler(CommandHandler("start", start))
