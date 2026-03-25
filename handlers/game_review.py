@@ -15,7 +15,8 @@ WAITING_GAME_REVIEW = 2
 
 def _escape_html(value: str) -> str:
     return (
-        value.replace("&", "&amp;")
+        str(value)
+        .replace("&", "&amp;")
         .replace("<", "&lt;")
         .replace(">", "&gt;")
     )
@@ -40,7 +41,47 @@ def _extract_message_text(message) -> str:
         return message.text
     if message.caption:
         return message.caption
+
+    if message.photo:
+        return "[Пользователь отправил фото без текста]"
+    if message.video:
+        return "[Пользователь отправил видео без текста]"
+    if message.document:
+        filename = message.document.file_name or "без названия"
+        return f"[Пользователь отправил документ: {filename}]"
+
     return "Текст не добавлен."
+
+
+def _build_admin_text(user, message) -> str:
+    sent_at = datetime.now().strftime("%d.%m.%Y %H:%M")
+    user_name = _escape_html(_get_user_name(user))
+    user_contact = _get_user_contact(user)
+    user_text = _escape_html(_extract_message_text(message))
+
+    media_info = []
+
+    if message.photo:
+        media_info.append("📎 Тип: фото")
+    if message.video:
+        media_info.append("📎 Тип: видео")
+    if message.document:
+        filename = _escape_html(message.document.file_name or "без названия")
+        media_info.append(f"📎 Тип: документ ({filename})")
+
+    media_block = ""
+    if media_info:
+        media_block = "\n" + "\n".join(media_info)
+
+    return (
+        "🎮 <b>Новая заявка на личный разбор игры</b>\n\n"
+        f"👤 <b>Имя:</b> {user_name}\n"
+        f"📩 <b>Контакт:</b> {user_contact}\n"
+        f"🆔 <b>ID:</b> <code>{user.id}</code>\n"
+        f"📅 <b>Дата отправки:</b> {sent_at}"
+        f"{media_block}\n\n"
+        f"💬 <b>Сообщение:</b>\n{user_text}"
+    )
 
 
 async def open_game_review(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -53,10 +94,9 @@ async def open_game_review(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await send_subscription_required(update, context)
         return ConversationHandler.END
 
-    keyboard = InlineKeyboardMarkup([
-    [InlineKeyboardButton(BotTexts.BTN_LEADERBOARD, callback_data="leaderboard")],
-    [InlineKeyboardButton(BotTexts.BTN_BACK, callback_data="back_to_menu")]
-    ])
+    keyboard = InlineKeyboardMarkup(
+        [[InlineKeyboardButton(BotTexts.BTN_BACK, callback_data="back_to_menu")]]
+    )
 
     await query.message.reply_text(
         BotTexts.game_review_intro(),
@@ -72,38 +112,36 @@ async def receive_game_review(update: Update, context: ContextTypes.DEFAULT_TYPE
     if not message or not user:
         return ConversationHandler.END
 
-    sent_at = datetime.now().strftime("%d.%m.%Y %H:%M")
-    user_name = _escape_html(_get_user_name(user))
-    user_contact = _get_user_contact(user)
-    user_text = _escape_html(_extract_message_text(message))
-
-    admin_text = (
-        "🎮 <b>Новая заявка на личный разбор игры</b>\n\n"
-        f"👤 <b>Имя:</b> {user_name}\n"
-        f"📩 <b>Контакт:</b> {user_contact}\n"
-        f"🆔 <b>ID:</b> <code>{user.id}</code>\n"
-        f"📅 <b>Дата отправки:</b> {sent_at}\n\n"
-        f"💬 <b>Сообщение:</b>\n{user_text}"
-    )
-
-    await context.bot.send_message(
-        chat_id=ADMIN_ID,
-        text=admin_text,
-        parse_mode=ParseMode.HTML,
-        disable_web_page_preview=False,
-    )
+    admin_text = _build_admin_text(user, message)
+    plain_text_for_sheet = _extract_message_text(message)
 
     try:
-        await context.bot.copy_message(
+        await context.bot.send_message(
             chat_id=ADMIN_ID,
-            from_chat_id=message.chat_id,
-            message_id=message.message_id,
+            text=admin_text,
+            parse_mode=ParseMode.HTML,
+            disable_web_page_preview=True,
         )
+    except Exception as e:
+        await message.reply_text(
+            "❌ Не удалось отправить заявку админу.\n"
+            "Проверь ADMIN_ID и открыл ли админ диалог с ботом через /start.\n\n"
+            f"Ошибка: {e}"
+        )
+        return ConversationHandler.END
+
+    try:
+        if message.photo or message.video or message.document:
+            await context.bot.copy_message(
+                chat_id=ADMIN_ID,
+                from_chat_id=message.chat_id,
+                message_id=message.message_id,
+            )
     except Exception:
         pass
 
     try:
-        save_game_review(user, _extract_message_text(message))
+        save_game_review(user, plain_text_for_sheet)
     except Exception:
         pass
 
