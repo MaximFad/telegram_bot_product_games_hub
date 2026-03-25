@@ -187,7 +187,6 @@ class BotTexts:
             "👋 Это твоя реферальная панель.\n\n"
             f"🏅 Текущий уровень: «{current_level}»\n"
             f"👥 Твои приглашённые: {current_refs}\n\n"
-            f"🔗 Твоя ссылка:\n{ref_link}\n\n"
         )
 
         if next_level_name and next_level_target:
@@ -249,7 +248,7 @@ class BotTexts:
             f"🏅 Текущий уровень: «{cls.LEVEL_1_NAME}»\n"
             f"👥 Приглашено друзей: {current_refs} из {REFERRALS_FOR_BONUS_1}\n\n"
             f"Ещё {left} — и откроется первый секретный материал.\n\n"
-            f"🔗 Твоя ссылка:\n{ref_link}"
+            
         )
 
     # =========================================================
@@ -267,7 +266,7 @@ class BotTexts:
             f"🎯 Новый этап: уровень «{cls.LEVEL_2_NAME}»\n"
             f"Пригласи ещё {next_step_count} друзей и открой следующий бонус.\n\n"
             f"Текущий прогресс уровня «{cls.LEVEL_2_NAME}»: 0 из {next_step_count}\n\n"
-            f"🔗 Твоя ссылка:\n{ref_link}"
+            
         )
 
     # =========================================================
@@ -286,7 +285,7 @@ class BotTexts:
             f"🏅 Текущий уровень: «{cls.LEVEL_2_NAME}»\n"
             f"👥 Прогресс: {progress_now} из {progress_total}\n"
             f"Осталось пригласить: {refs_left}\n\n"
-            f"🔗 Твоя ссылка:\n{ref_link}"
+            
         )
 
     # =========================================================
