@@ -123,12 +123,12 @@ async def receive_game_review(update: Update, context: ContextTypes.DEFAULT_TYPE
             disable_web_page_preview=True,
         )
     except Exception as e:
+        print(f"[GAME_REVIEW_ERROR] {e}")
+
         await message.reply_text(
-            "❌ Не удалось отправить заявку админу.\n"
-            "Проверь ADMIN_ID и открыл ли админ диалог с ботом через /start.\n\n"
-            f"Ошибка: {e}"
+            "❌ Не удалось отправить заявку. Попробуй позже."
         )
-        return ConversationHandler.END
+    return ConversationHandler.END
 
     try:
         if message.photo or message.video or message.document:
